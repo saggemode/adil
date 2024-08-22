@@ -1,0 +1,361 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  MODERATOR
+}
+
+enum SessionStatus {
+  ACTIVE
+  COMPLETED
+  EXPIRED
+  FAILED
+}
+
+enum Status {
+  ACTIVE
+  DRAFT
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  oauth_token_secret String?
+  oauth_token        String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model User {
+  id                String     @id @default(cuid())
+  email             String?    @unique @db.VarChar(255)
+  emailVerified     DateTime?
+  phone             String?    @unique @db.VarChar(255)
+  name              String?    @db.VarChar(255)
+  image             String?    @db.Text
+  password          String?    @db.Text
+  OTP               String?
+  isEmailVerified   Boolean    @default(false)
+  isPhoneVerified   Boolean    @default(false)
+  isEmailSubscribed Boolean    @default(false)
+  isPhoneSubscribed Boolean    @default(false)
+  isBanned          Boolean    @default(false)
+  wishlist          Product[]  @relation("Wishlist")
+  accounts          Account[]
+  cartItems         CartItem[]
+  cart              Cart[]
+  orders            Order[]
+  reviews           Review[]
+  stripeCustomerId  String?
+  address           Json?
+  paymentMethod     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  role                  UserRole               @default(USER)
+  isTwoFactorEnabled    Boolean                @default(false)
+  twoFactorConfirmation TwoFactorConfirmation?
+}
+
+model VerificationToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model TwoFactorToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model TwoFactorConfirmation {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+}
+
+model Brand {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  products Product[] @relation("BrandToProduct")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Banner {
+  id       String @id @default(cuid())
+  label    String
+  imageUrl String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id String @id @default(cuid())
+
+  title    String    @unique
+  products Product[] @relation("CategoryToProduct")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id          String  @id @default(cuid())
+  name        String  @db.VarChar(255)
+  description String? @db.Text
+  images      Image[]
+  slug        String  @db.VarChar(255)
+  price       Int?    @default(0)
+  discount    Int?    @default(0)
+  stock       Int?    @default(0)
+  rating      Int?    @default(0)
+  numReviews  Int?    @default(0)
+  isFeatured  Boolean @default(false)
+  isArchived  Boolean @default(false)
+
+  items     OrderItem[]
+  cartItems CartItem[]
+  wishlists User[]      @relation("Wishlist")
+  reviews   Review[]
+
+  brand   Brand?  @relation("BrandToProduct", fields: [brandId], references: [id])
+  brandId String?
+
+  sizeId String?
+  size   Size?   @relation(fields: [sizeId], references: [id])
+
+  colorId String?
+  color   Color?  @relation(fields: [colorId], references: [id])
+
+  categoryId String?
+  category   Category? @relation("CategoryToProduct", fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([brandId])
+  @@index([categoryId])
+  @@index([sizeId])
+  @@index([colorId])
+}
+
+model Review {
+  id                 String   @id @default(uuid())
+  userId             String
+  productId          String
+  rating             Int
+  title              String
+  description        String
+  isVerifiedPurchase Boolean  @default(true)
+  createdAt          DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+}
+
+model Color {
+  id String @id @default(cuid())
+
+  name      String
+  value     String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Size {
+  id String @id @default(cuid())
+
+  name      String
+  value     String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Cart {
+  id              String  @id @default(cuid())
+  userId          String  @unique
+  cartItems       Json[]
+  totalPrice      Int
+  itemsPrice      Int?
+  shippingAddress Json?
+  paymentMethod   String?
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CartItem {
+  id        String @id @default(cuid())
+  productId String
+  quantity  Int    @default(1)
+  userId    String
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, productId], name: "UniqueCartItem")
+}
+
+model Order {
+  id              String           @id @default(cuid())
+  sessionId       String?
+  orderNumber     String?          @unique
+  idempotencyKey  String?
+  paymentIntentId String?          @unique
+  totalPrice      Int
+  itemsPrice      Int?
+  shippingPrice   Int?
+  taxPrice        Int?
+  color           String?
+  discount        Float            @default(0)
+  status          OrderStatusEnum  @default(Processing)
+  shippingAddress ShippingAddress?
+  paymentMethod   String
+  paymentResult   Json?
+  isPaid          Boolean          @default(false)
+  paidAt          DateTime?
+  isDelivered     Boolean          @default(false)
+  deliveredAt     DateTime?
+  items           OrderItem[]
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  PaymentResult PaymentResult[]
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  name      String
+  slug      String
+  quantity  Int
+  image     String  @db.VarChar(255)
+  price     Int
+  color     String
+  size      String
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([orderId, productId], name: "UniqueOrderItem")
+}
+
+model CheckoutSession {
+  id         Int           @id @default(autoincrement())
+  sessionId  String        @unique
+  sessionUrl String
+  userId     String
+  productIds Int[]
+  quantities Int[]
+  status     SessionStatus @default(ACTIVE)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+}
+
+model ShippingAddress {
+  id         String @id @default(cuid())
+  orderId    String
+  order      Order? @relation(fields: [orderId], references: [id])
+  fullName   String
+  address    String
+  city       String
+  postalCode String
+  country    String
+
+  @@unique([orderId], name: "UniqueOrderItem")
+}
+
+model PaymentResult {
+  id           String  @id @default(cuid())
+  orderId      String
+  order        Order?  @relation(fields: [orderId], references: [id])
+  status       String?
+  emailAddress String?
+}
+
+enum OrderStatusEnum {
+  Processing
+  Shipped
+  Delivered
+  ReturnProcessing
+  ReturnCompleted
+  Cancelled
+  RefundProcessing
+  RefundCompleted
+  Denied
+  pending
+}
+
+enum PaymentStatusEnum {
+  Processing
+  Paid
+  Failed
+  Denied
+}
