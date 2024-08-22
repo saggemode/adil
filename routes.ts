@@ -5,6 +5,7 @@
  */
 export const publicRoutes = [
   "/",
+   "/:id",
   "/auth/new-verification"
 ];
 
