@@ -8,7 +8,7 @@ const useCount = (setCount: Dispatch<SetStateAction<number>>) => {
     }
 
     setCount(countInput)
-  }, [])
+  }, [setCount])
 
   const handleIncrementCount = () => {
     setCount((prev) => {
