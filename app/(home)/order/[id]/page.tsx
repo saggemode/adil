@@ -31,8 +31,6 @@ const OrderDetailsPage = async ({
     client_secret = paymentIntent.client_secret
   }
 
-  //const isAdmin = session?.user?.role === 'admin'
-
   return (
     <OrderDetailsForm
       order={order}

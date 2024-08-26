@@ -19,7 +19,7 @@ export default function ChartsCard({
             <XAxis
               dataKey="months"
               stroke="#888888"
-              fontSize={12}
+              fontSize={10}
               tickLine={false}
               axisLine={false}
             />
