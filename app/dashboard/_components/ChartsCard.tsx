@@ -14,12 +14,12 @@ export default function ChartsCard({
         <CardTitle>Overview</CardTitle>
       </CardHeader>
       <CardContent className="pl-2">
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={400}>
           <BarChart data={salesData}>
             <XAxis
               dataKey="months"
               stroke="#888888"
-              fontSize={10}
+              fontSize={12}
               tickLine={false}
               axisLine={false}
             />
