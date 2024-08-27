@@ -1,15 +1,10 @@
 'use client'
 
+import { useTransition, useState } from 'react'
 import { updateProfile } from '@/actions/services/userService'
 import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+import { Form } from '@/components/ui/form'
+import { InputForm } from '@/components/ui/input-form'
 import { useToast } from '@/components/ui/use-toast'
 import { updateProfileSchema } from '@/schemas'
 
@@ -20,12 +15,13 @@ import { z } from 'zod'
 
 const ProfileForm = () => {
   const { data: session, update } = useSession()
+
   const form = useForm<z.infer<typeof updateProfileSchema>>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
       name: session?.user.name!,
       email: session?.user.email!,
-       phone: session?.user.phone!,
+      phone: session?.user.phone!,
     },
   })
   const { toast } = useToast()
@@ -59,55 +55,28 @@ const ProfileForm = () => {
         className="flex flex-col gap-5"
       >
         <div className="flex flex-col gap-5">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <Input
-                    disabled
-                    placeholder="Email"
-                    {...field}
-                    className="input-field"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
+          <InputForm
             control={form.control}
             name="name"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <Input
-                    placeholder="Name"
-                    {...field}
-                    className="input-field"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Name"
+            placeholder="Product Name"
+            disabled={form.formState.isSubmitting}
           />
 
-          <FormField
+          <InputForm
+            control={form.control}
+            name="email"
+            label="Email"
+            placeholder="Email"
+            disabled
+          />
+
+          <InputForm
             control={form.control}
             name="phone"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <Input
-                    placeholder="phone number"
-                    {...field}
-                    className="input-field"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Phone"
+            placeholder="phone number"
+            disabled={form.formState.isSubmitting}
           />
         </div>
 

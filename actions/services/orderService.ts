@@ -238,11 +238,7 @@ export async function approvePayPalOrder(
     const captureData = await paypal.capturePayment(data.orderID)
     order.isPaid = true
     order.paidAt = new Date()
-    // if (
-    //   !captureData ||
-    //   captureData.id !== order.paymentResult?.id ||
-    //   captureData.status !== 'COMPLETED'
-    // )
+
     if (
       !captureData ||
       captureData.id !== (order.paymentResult as { id: string }).id ||
