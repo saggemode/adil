@@ -16,6 +16,9 @@ import TotalProductsCard from './_components/TotalProductsCard'
 import RecentSalesCard from './_components/RecentSalesCard'
 import EventCalendarCard from './_components/EventCalendarCard'
 import PageContainer from '@/components/page-container'
+import { BarGraph } from './_components/bar-graph'
+import { AreaGraph } from './_components/area-graph'
+import { PieGraph } from './_components/pie-graph'
 
 export const metadata: Metadata = {
   title: `Admin Dashboard - ${APP_NAME}`,
@@ -26,7 +29,7 @@ export default async function page() {
 
   return (
     <PageContainer scrollable={true}>
-      <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+      <div className=" space-y-4 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
             Hi, Welcome back 👋
@@ -72,6 +75,17 @@ export default async function page() {
                   <EventCalendarCard />
                 </CardContent>
               </Card>
+
+              <div className="col-span-4">
+                <AreaGraph />
+              </div>
+              <div className="col-span-4 md:col-span-3">
+                <PieGraph />
+              </div>
+
+              <div className="col-span-4">
+                <BarGraph />
+              </div>
             </div>
           </TabsContent>
         </Tabs>
