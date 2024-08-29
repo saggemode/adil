@@ -1,31 +1,27 @@
-'use client'
-
-import { DashboardNav } from '@/components/dashboard-nav'
-import { navItems } from '@/constants/data'
-import { cn } from '@/lib/utils'
-import { ChevronLeft } from 'lucide-react'
-import { useSidebar } from '@/hooks/useSidebar'
-import Link from 'next/link'
+'use client';
+import React, { useState } from 'react';
+import { DashboardNav } from '@/components/dashboard-nav';
+import { navItems } from '@/constants/data';
+import { cn } from '@/lib/utils';
+import { ChevronLeft } from 'lucide-react';
+import { useSidebar } from '@/hooks/useSidebar';
+import Link from 'next/link';
 
 type SidebarProps = {
-  className?: string
-}
+  className?: string;
+};
 
 export default function Sidebar({ className }: SidebarProps) {
-  const { isMinimized, toggle } = useSidebar()
+  const { isMinimized, toggle } = useSidebar();
 
   const handleToggle = () => {
-    toggle()
-  }
+    toggle();
+  };
 
   return (
     <aside
-      // className={cn(
-      //   `relative hidden overflow-y-auto border-r pt-16 lg:block w-72`
-      // )}
-
       className={cn(
-        `relative  hidden  h-screen flex-none border-r bg-card transition-[width] duration-500 md:block`,
+        `relative  hidden h-screen flex-none border-r bg-card transition-[width] duration-500 md:block`,
         !isMinimized ? 'w-72' : 'w-[72px]',
         className
       )}
@@ -58,11 +54,11 @@ export default function Sidebar({ className }: SidebarProps) {
       />
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
-          <div className="space-y-1">
+          <div className="mt-3 space-y-1">
             <DashboardNav items={navItems} />
           </div>
         </div>
       </div>
     </aside>
-  )
+  );
 }

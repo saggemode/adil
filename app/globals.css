@@ -59,6 +59,26 @@
   }
 }
 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply box-border bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .min-h-screen {
+    min-height: 100vh; /* Fallback */
+    min-height: 100dvh;
+  }
+  .h-screen {
+    height: 100vh; /* Fallback */
+    height: 100dvh;
+  }
+}
+
 .react-calendar {
   width: 100% !important;
   border: none !important;
@@ -94,7 +114,7 @@
 }
 
 .rbc-toolbar button.rbc-active {
-  background-color: #dbdafe !important;
+  background-color: #7573ad !important;
   box-shadow: none !important;
 }
 
@@ -200,10 +220,73 @@ button {
   @apply rounded border border-[#EAEAEF] bg-white px-6 py-6 shadow-sm;
 }
 
-/* .container {
-  @apply mx-auto w-full max-w-5xl;
-} */
 
-.container {
-  @apply mx-auto w-full;
+  /* styles.css */
+  .collapsibleDropdown {
+    overflow: hidden;
+  }
+  .collapsibleDropdown[data-state='open'] {
+    animation: slideDown 200ms ease-out;
+  }
+  .collapsibleDropdown[data-state='closed'] {
+    animation: slideUp 200ms ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-collapsible-content-height);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      height: var(--radix-collapsible-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply min-h-svh w-full bg-background text-foreground;
+  }
+  body > #root {
+    @apply h-svh;
+  }
+
+  /* Prevent focus zoom on mobile devices */
+  @media screen and (max-width: 767px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
+
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .faded-bottom {
+    @apply after:pointer-events-none after:absolute after:bottom-0 after:left-0 after:hidden after:h-32 after:w-full after:bg-[linear-gradient(180deg,_transparent_10%,_hsl(var(--background))_70%)] after:md:block;
+  }
 }
+
+
+/* .container {
+  @apply mx-auto w-full;
+} */

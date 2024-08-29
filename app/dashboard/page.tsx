@@ -15,6 +15,7 @@ import CustomersCard from './_components/TotalCustomersCard'
 import TotalProductsCard from './_components/TotalProductsCard'
 import RecentSalesCard from './_components/RecentSalesCard'
 import EventCalendarCard from './_components/EventCalendarCard'
+import PageContainer from '@/components/page-container'
 
 export const metadata: Metadata = {
   title: `Admin Dashboard - ${APP_NAME}`,
@@ -24,7 +25,7 @@ export default async function page() {
   const summary = await getOrderSummary()
 
   return (
-    <ScrollArea className="h-full">
+    <PageContainer scrollable={true}>
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
@@ -75,6 +76,6 @@ export default async function page() {
           </TabsContent>
         </Tabs>
       </div>
-    </ScrollArea>
+    </PageContainer>
   )
 }
