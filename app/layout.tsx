@@ -24,14 +24,11 @@ export default async function RootLayout({
       <html
         lang="en"
         suppressHydrationWarning
-        className={cn(
-          "h-full scroll-smooth antialiased",
-          GeistSans.variable
-        )}
+        className={cn('h-full scroll-smooth antialiased', GeistSans.variable)}
       >
         <body className="bg-neutral-50 text-black selection:bg-teal-300 dark:bg-neutral-900 dark:text-white dark:selection:bg-pink-500 dark:selection:text-white h-full">
           <ThemeProvider
-            themes={["dark", "custom", "light"]}
+            themes={['dark', 'system', 'light']}
             attribute="class"
             enableSystem
             defaultTheme="system"
@@ -46,5 +43,5 @@ export default async function RootLayout({
         </body>
       </html>
     </SessionProvider>
-  );
+  )
 }
